@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Gestión de Datos — Pymap</title>
+        <link rel="stylesheet" href="css/estilo.css" />
+        <link rel="icon" href="favicon.ico" type="image/x-icon" />
+        <script type="module" src="js/template-include.js"></script>
+        <script type="module" src="js/auth-guard.js"></script>
+    </head>
+    <body>
+        <div class="app">
+            <div id="sidebar-container"></div>
+
+            <main class="main">
+                <section class="card">
+                    <div class="page-title">
+                        <h1>Gestión de Datos</h1>
+                        <p>
+                            Administra todas las colecciones de la plataforma
+                            desde un solo lugar.
+                        </p>
+                    </div>
+
+                    <div
+                        class="metrics"
+                        style="margin-top: 16px"
+                        id="metrics-container"
+                    ></div>
+                </section>
+
+                <div class="content">
+                    <div class="card">
+                        <div
+                            style="
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-bottom: 16px;
+                            "
+                        >
+                            <h2
+                                style="
+                                    margin: 0;
+                                    font-size: 16px;
+                                    font-weight: 700;
+                                    color: var(--purple);
+                                "
+                                id="table-title"
+                            >
+                                Datos
+                            </h2>
+
+                            <select
+                                class="select"
+                                id="collection-selector"
+                                style="width: 200px"
+                            >
+                                <option value="users">Usuarios</option>
+                                <option value="businesses">Negocios</option>
+                                <option value="bookings">Reservas</option>
+                                <option value="reviews">Reseñas</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtros personalizados -->
+                        <div
+                            style="
+                                display: flex;
+                                gap: 12px;
+                                align-items: center;
+                                margin-bottom: 16px;
+                                padding: 12px;
+                                background: var(--bg);
+                                border-radius: 8px;
+                            "
+                        >
+                            <select
+                                class="select"
+                                id="filter-field"
+                                style="flex: 0 0 180px"
+                            >
+                                <option value="">Seleccionar campo...</option>
+                            </select>
+
+                            <span style="color: var(--muted); font-size: 14px"
+                                >igual a:</span
+                            >
+
+                            <input
+                                type="text"
+                                id="filter-value"
+                                class="input"
+                                placeholder="Valor..."
+                                style="flex: 1; min-width: 200px"
+                            />
+
+                            <button
+                                class="btn"
+                                id="apply-filter-btn"
+                                style="flex: 0 0 auto"
+                            >
+                                🔍 Filtrar
+                            </button>
+
+                            <button
+                                class="btn ghost"
+                                id="clear-filter-btn"
+                                style="flex: 0 0 auto"
+                            >
+                                ✖️ Limpiar
+                            </button>
+                        </div>
+
+                        <div id="data-table-container"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+        <script type="module" src="js/data-manager.js"></script>
+    </body>
+</html>

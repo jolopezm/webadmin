@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Visión General — Pymap</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Auth Guard - Protege esta página -->
+    <script type="module" src="../js/auth-guard.js"></script>
+
+    <style>
+        :root{
+            --purple:#6C3BBF;
+            --gray:#D9D9D9;
+            --bg:#ffffff;
+            --muted:#7a7a7a;
+            --card-radius:12px;
+            --card-shadow: 0 6px 18px rgba(108,59,191,0.08);
+            font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+        html,body{height:100%;margin:0;background: #f6f7fb;color:#222}
+        .container{max-width:1200px;margin:28px auto;padding:20px}
+        header{
+            display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;
+            gap:16px;
+        }
+        .brand{display:flex;align-items:center;gap:12px}
+        .logo{
+            width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--purple),#8A5BF0);
+            display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;box-shadow:var(--card-shadow);
+        }
+        .biz{line-height:1}
+        .biz h1{margin:0;font-size:20px;font-weight:600;color:var(--purple)}
+        .biz p{margin:0;font-size:13px;color:var(--muted)}
+        .header-actions{display:flex;align-items:center;gap:12px}
+        .icon-btn{background:var(--bg);border:1px solid var(--gray);padding:8px;border-radius:10px;cursor:pointer}
+        .profile{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;background:var(--bg);border:1px solid var(--gray)}
+        .profile img{width:36px;height:36px;border-radius:50%}
+
+        /* layout */
+        .top-row{display:flex;gap:20px;margin-bottom:18px;align-items:flex-start}
+        .left{flex:1}
+        .right{width:320px}
+
+        /* date filters */
+        .filters{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+        .seg{background:#fff;border:1px solid var(--gray);border-radius:999px;padding:6px;display:flex;gap:6px}
+        .seg button{background:transparent;border:0;padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:500;color:var(--muted)}
+        .seg button.active{background:linear-gradient(90deg,var(--purple),#8A5BF0);color:#fff;box-shadow:var(--card-shadow)}
+        .date-range{display:flex;gap:8px;align-items:center}
+        .date-range input{padding:8px;border-radius:8px;border:1px solid var(--gray);background:#fff}
+
+        /* KPI cards */
+        .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+        .kpi{background:var(--bg);padding:14px;border-radius:var(--card-radius);box-shadow:var(--card-shadow);border:1px solid #f0eff6;position:relative}
+        .kpi .label{font-size:13px;color:var(--muted);margin-bottom:8px}
+        .kpi .value{font-size:20px;font-weight:600;color:#111}
+        .kpi .sub{font-size:13px;color:var(--muted);margin-top:6px}
+        .tooltip{
+            position:absolute;top:8px;right:10px;font-size:12px;color:var(--muted);padding:6px 8px;border-radius:8px;
+            background:transparent;cursor:help;border:0;
+        }
+        .kpi[data-tooltip]:hover:after{
+            content:attr(data-tooltip);
+            position:absolute;right:10px;top:36px;white-space:nowrap;background:#111;color:#fff;padding:8px 10px;border-radius:8px;font-size:12px;
+            transform:translateY(0);z-index:30;
+        }
+
+        /* charts & lists */
+        .panel{background:var(--bg);padding:14px;border-radius:var(--card-radius);box-shadow:var(--card-shadow);border:1px solid #f0eff6}
+        .charts{display:grid;grid-template-columns:1fr 380px;gap:12px;margin-bottom:12px}
+        .chart-canvas{height:260px}
+        .stacked{height:260px}
+
+        .lists{display:grid;grid-template-columns:1fr 320px;gap:12px}
+        .comments li{display:flex;gap:10px;padding:10px;border-bottom:1px solid #f3f3f3;align-items:flex-start}
+        .comments li:last-child{border-bottom:0}
+        .comment-state{font-size:12px;padding:6px 8px;border-radius:8px;background:#f6f6f6;border:1px solid var(--gray)}
+        .comment-actions button{background:var(--purple);color:#fff;border:0;padding:6px 10px;border-radius:8px;cursor:pointer}
+        .alerts .alert{display:flex;gap:10px;align-items:center;padding:10px;border-bottom:1px dashed #eee}
+        .quick-ctas{display:flex;flex-direction:column;gap:8px}
+        .cta{display:flex;gap:10px;align-items:center;background:linear-gradient(90deg,var(--purple),#8A5BF0);color:#fff;padding:10px;border-radius:10px;border:0;cursor:pointer}
+
+        /* responsive */
+        @media (max-width:1000px){
+            .kpi-grid{grid-template-columns:repeat(2,1fr)}
+            .charts{grid-template-columns:1fr}
+            .lists{grid-template-columns:1fr}
+            .right{width:100%}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                <div class="logo">PM</div>
+                <div class="biz">
+                    <h1>Visión General</h1>
+                    <p>Resumen de tu rendimiento y actividad reciente</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="icon-btn" title="Notificaciones">🔔</button>
+                <button class="icon-btn" title="Soporte">❓</button>
+                <div class="profile">
+                    <img src="https://via.placeholder.com/36" alt="perfil">
+                    <div style="font-size:13px;color:var(--muted)">Mi Cuenta</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="top-row">
+            <div class="left">
+                <div class="panel" style="margin-bottom:12px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                        <div style="display:flex;gap:12px;align-items:center">
+                            <strong style="font-size:18px">KPIs</strong>
+                            <div class="filters">
+                                <div class="seg" role="tablist">
+                                    <button data-range="7">7d</button>
+                                    <button class="active" data-range="30">30d</button>
+                                    <button data-range="custom">Custom</button>
+                                </div>
+                                <div class="date-range">
+                                    <input type="date" id="from" />
+                                    <input type="date" id="to" />
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:8px">
+                            <button class="icon-btn" title="Descargar">⬇</button>
+                            <button class="icon-btn" title="Filtrar">⚙</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kpi-grid" id="kpis">
+                    <div class="kpi" data-tooltip="Número de solicitudes actualmente abiertas o pendientes">
+                        <div class="label">Solicitudes activas</div>
+                        <div class="value">48</div>
+                        <div class="sub">Última 24h: +4</div>
+                        <button class="tooltip" aria-hidden>ℹ</button>
+                    </div>
+
+                    <div class="kpi" data-tooltip="Promedio de calificación de clientes (1-5)">
+                        <div class="label">Calificación promedio</div>
+                        <div class="value">4.6 ★</div>
+                        <div class="sub">Basado en 324 reseñas</div>
+                        <button class="tooltip" aria-hidden>ℹ</button>
+                    </div>
+
+                    <div class="kpi" data-tooltip="Tiempo promedio de respuesta en minutos">
+                        <div class="label">Tiempo respuesta</div>
+                        <div class="value">12 min</div>
+                        <div class="sub">Meta: ≤ 15 min</div>
+                        <button class="tooltip" aria-hidden>ℹ</button>
+                    </div>
+
+                    <div class="kpi" data-tooltip="Porcentaje de solicitudes que se convirtieron en pago">
+                        <div class="label">Conversión solicitud→pago</div>
+                        <div class="value">38%</div>
+                        <div class="sub">Objetivo: 45%</div>
+                        <button class="tooltip" aria-hidden>ℹ</button>
+                    </div>
+                </div>
+
+                <div class="charts">
+                    <div class="panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                            <strong>Tendencia (30 días)</strong>
+                            <div style="font-size:13px;color:var(--muted)">Solicitudes vs Pagos</div>
+                        </div>
+                        <canvas id="lineChart" class="chart-canvas"></canvas>
+                    </div>
+
+                    <div class="panel">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                            <strong>Comentarios por semana</strong>
+                            <div style="font-size:13px;color:var(--muted)">Pos / Neu / Neg</div>
+                        </div>
+                        <canvas id="stackedChart" class="stacked"></canvas>
+                    </div>
+                </div>
+
+                <div class="lists">
+                    <div class="panel comments">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                            <strong>Últimos comentarios</strong>
+                            <div style="font-size:13px;color:var(--muted)">Mostrando 5</div>
+                        </div>
+                        <ul style="list-style:none;padding:0;margin:0">
+                            <li>
+                                <img src="https://via.placeholder.com/40" style="width:40px;height:40px;border-radius:8px" alt="">
+                                <div style="flex:1">
+                                    <div style="display:flex;justify-content:space-between;align-items:center">
+                                        <div><strong>Juan Pérez</strong> <span style="color:var(--muted);font-size:13px">— 2h</span></div>
+                                        <div class="comment-state">Pendiente</div>
+                                    </div>
+                                    <div style="margin-top:6px;color:var(--muted);font-size:14px">Excelente servicio, llegaron a tiempo y todo bien.</div>
+                                </div>
+                                <div class="comment-actions" style="display:flex;flex-direction:column;gap:6px">
+                                    <button class="cta" style="padding:6px 10px;background:#fff;color:var(--purple);border:1px solid var(--purple)">Ver</button>
+                                    <button style="padding:6px 10px;border-radius:8px;background:var(--purple);color:#fff;border:0">Responder</button>
+                                </div>
+                            </li>
+
+                            <li>
+                                <img src="https://via.placeholder.com/40" style="width:40px;height:40px;border-radius:8px" alt="">
+                                <div style="flex:1">
+                                    <div style="display:flex;justify-content:space-between;align-items:center">
+                                        <div><strong>María López</strong> <span style="color:var(--muted);font-size:13px">— 1d</span></div>
+                                        <div class="comment-state">Respondido</div>
+                                    </div>
+                                    <div style="margin-top:6px;color:var(--muted);font-size:14px">Hubo un retraso, pero resolvieron rápido.</div>
+                                </div>
+                                <div class="comment-actions" style="display:flex;flex-direction:column;gap:6px">
+                                    <button class="cta" style="padding:6px 10px;background:#fff;color:var(--purple);border:1px solid var(--purple)">Ver</button>
+                                    <button style="padding:6px 10px;border-radius:8px;background:#8A5BF0;color:#fff;border:0">Responder</button>
+                                </div>
+                            </li>
+
+                            <li>
+                                <img src="https://via.placeholder.com/40" style="width:40px;height:40px;border-radius:8px" alt="">
+                                <div style="flex:1">
+                                    <div style="display:flex;justify-content:space-between;align-items:center">
+                                        <div><strong>Sergio R</strong> <span style="color:var(--muted);font-size:13px">— 3d</span></div>
+                                        <div class="comment-state">Sin respuesta</div>
+                                    </div>
+                                    <div style="margin-top:6px;color:var(--muted);font-size:14px">El producto llegó defectuoso.</div>
+                                </div>
+                                <div class="comment-actions" style="display:flex;flex-direction:column;gap:6px">
+                                    <button class="cta" style="padding:6px 10px;background:#fff;color:var(--purple);border:1px solid var(--purple)">Ver</button>
+                                    <button style="padding:6px 10px;border-radius:8px;background:var(--purple);color:#fff;border:0">Responder</button>
+                                </div>
+                            </li>
+
+                            <li>
+                                <img src="https://via.placeholder.com/40" style="width:40px;height:40px;border-radius:8px" alt="">
+                                <div style="flex:1">
+                                    <div style="display:flex;justify-content:space-between;align-items:center">
+                                        <div><strong>Ana G</strong> <span style="color:var(--muted);font-size:13px">— 5d</span></div>
+                                        <div class="comment-state">Positivo</div>
+                                    </div>
+                                    <div style="margin-top:6px;color:var(--muted);font-size:14px">Muy buena atención.</div>
+                                </div>
+                                <div class="comment-actions" style="display:flex;flex-direction:column;gap:6px">
+                                    <button class="cta" style="padding:6px 10px;background:#fff;color:var(--purple);border:1px solid var(--purple)">Ver</button>
+                                    <button style="padding:6px 10px;border-radius:8px;background:var(--purple);color:#fff;border:0">Responder</button>
+                                </div>
+                            </li>
+
+                            <li>
+                                <img src="https://via.placeholder.com/40" style="width:40px;height:40px;border-radius:8px" alt="">
+                                <div style="flex:1">
+                                    <div style="display:flex;justify-content:space-between;align-items:center">
+                                        <div><strong>Francisco</strong> <span style="color:var(--muted);font-size:13px">— 7d</span></div>
+                                        <div class="comment-state">Neutral</div>
+                                    </div>
+                                    <div style="margin-top:6px;color:var(--muted);font-size:14px">Servicio correcto, nada fuera de lo común.</div>
+                                </div>
+                                <div class="comment-actions" style="display:flex;flex-direction:column;gap:6px">
+                                    <button class="cta" style="padding:6px 10px;background:#fff;color:var(--purple);border:1px solid var(--purple)">Ver</button>
+                                    <button style="padding:6px 10px;border-radius:8px;background:var(--purple);color:#fff;border:0">Responder</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="panel alerts">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                            <strong>Alertas</strong>
+                            <div style="font-size:13px;color:var(--muted)">Acciones pendientes</div>
+                        </div>
+                        <div class="alert">
+                            <div style="width:12px;height:12px;border-radius:50%;background:#ffb133"></div>
+                            <div style="flex:1">
+                                <div style="font-weight:600">Pagos pendientes de conciliación</div>
+                                <div style="font-size:13px;color:var(--muted)">3 transacciones requieren revisión</div>
+                            </div>
+                            <button style="padding:6px 10px;border-radius:8px;background:var(--purple);color:#fff;border:0">Revisar</button>
+                        </div>
+
+                        <div class="alert">
+                            <div style="width:12px;height:12px;border-radius:50%;background:#ff6b6b"></div>
+                            <div style="flex:1">
+                                <div style="font-weight:600">Reclamos sin respuesta</div>
+                                <div style="font-size:13px;color:var(--muted)">2 reclamos abiertos</div>
+                            </div>
+                            <button style="padding:6px 10px;border-radius:8px;background:#fff;color:var(--purple);border:1px solid var(--purple)">Atender</button>
+                        </div>
+
+                        <div style="margin-top:12px">
+                            <strong style="font-size:14px">CTA rápidos</strong>
+                            <div class="quick-ctas" style="margin-top:8px">
+                                <button class="cta">Ver Pedidos</button>
+                                <button class="cta">Mis Servicios</button>
+                                <button class="cta">Comentarios y Reclamos</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <aside class="right">
+                <div class="panel" style="margin-bottom:12px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                        <strong>Ingresos del mes</strong>
+                        <div style="font-size:13px;color:var(--muted)">CLP</div>
+                    </div>
+                    <div style="font-size:26px;font-weight:700;color:var(--purple)">$1.245.300</div>
+                    <div style="margin-top:8px;color:var(--muted)">Meta mensual: $1.500.000</div>
+                </div>
+
+                <div class="panel" style="margin-bottom:12px">
+                    <strong style="display:block;margin-bottom:8px">Indicadores rápidos</strong>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                        <div style="display:flex;justify-content:space-between">
+                            <div style="color:var(--muted)">Pedidos hoy</div><div>12</div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between">
+                            <div style="color:var(--muted)">Nuevos clientes</div><div>5</div>
+                        </div>
+                        <div style="display:flex;justify-content:space-between">
+                            <div style="color:var(--muted)">Reembolsos</div><div>1</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <strong style="display:block;margin-bottom:8px">Estado vacío (ejemplo)</strong>
+                    <div style="color:var(--muted)">Si no hay alertas, se mostrará un mensaje amigable aquí.</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // Simple filter buttons behavior
+        document.querySelectorAll('.seg button').forEach(btn=>{
+            btn.addEventListener('click', ()=>{
+                document.querySelectorAll('.seg button').forEach(b=>b.classList.remove('active'));
+                btn.classList.add('active');
+                // TODO: trigger data refresh based on btn.dataset.range
+            });
+        });
+
+        // Line chart (Requests vs Payments - sample data last 30 days)
+        const lineCtx = document.getElementById('lineChart').getContext('2d');
+        const days = Array.from({length:30}, (_,i)=>i+1);
+        const requests = days.map(d=>Math.round(30 + Math.sin(d/4)*8 + Math.random()*8));
+        const payments = days.map(d=>Math.round(12 + Math.cos(d/6)*6 + Math.random()*6));
+        new Chart(lineCtx, {
+            type:'line',
+            data:{
+                labels: days.map(d=>`D-${30-d+1}`),
+                datasets:[
+                    {label:'Solicitudes',data:requests,borderColor: 'rgba(108,59,191,0.9)',backgroundColor:'rgba(108,59,191,0.12)',tension:0.3,fill:true},
+                    {label:'Pagos',data:payments,borderColor: 'rgba(120,120,200,0.8)',backgroundColor:'rgba(120,120,200,0.06)',tension:0.3,fill:true}
+                ]
+            },
+            options:{
+                responsive:true,
+                plugins:{legend:{position:'top'}},
+                scales:{y:{beginAtZero:true}}
+            }
+        });
+
+        // Stacked bar (weekly POS/NEU/NEG)
+        const stackedCtx = document.getElementById('stackedChart').getContext('2d');
+        const weeks = ['W-4','W-3','W-2','W-1'];
+        const pos = [12,18,15,20];
+        const neu = [8,6,10,7];
+        const neg = [2,3,1,4];
+        new Chart(stackedCtx, {
+            type:'bar',
+            data:{
+                labels: weeks,
+                datasets:[
+                    {label:'Positivos',data:pos,backgroundColor:'rgba(76,175,80,0.9)'},
+                    {label:'Neutrales',data:neu,backgroundColor:'rgba(200,200,200,0.9)'},
+                    {label:'Negativos',data:neg,backgroundColor:'rgba(255,99,132,0.9)'}
+                ]
+            },
+            options:{
+                responsive:true,
+                plugins:{legend:{position:'top'}},
+                scales:{
+                    x:{stacked:true},
+                    y:{stacked:true,beginAtZero:true}
+                }
+            }
+        });
+
+        // Simple empty state / accessibility: set default dates for 30d
+        (function setDefaultDates(){
+            const to = new Date();
+            const from = new Date(); from.setDate(to.getDate()-29);
+            const f = (d)=>d.toISOString().slice(0,10);
+            document.getElementById('from').value = f(from);
+            document.getElementById('to').value = f(to);
+        })();
+    </script>
+</body>
+</html></div>

@@ -1,0 +1,53 @@
+<!-- Template para tarjeta de comentario -->
+<style>
+.response-box {
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 6px;
+    border-left: 3px solid var(--purple);
+}
+</style>
+<div class="comment" data-comment-id="{id}">
+    <div class="meta">
+        <div class="user">{user}</div>
+        <div style="font-size: 11px; margin-top: 4px">{date}</div>
+    </div>
+        <div class="response-container" style="display:{responseDisplay}">
+            <div class="response-box">
+                <strong style="color: var(--purple); font-size: 12px"
+                    >Respuesta:</strong
+                >
+                <div class="small" style="margin-top: 4px">{response}</div>
+                <div class="small" style="margin-top: 4px; color: var(--muted)">
+                    {responseDate}
+                </div>
+            </div>
+        </div>
+                    >Respuesta:</strong
+                >
+                <div class="small" style="margin-top: 4px">{response}</div>
+                <div class="small" style="margin-top: 4px; color: var(--muted)">
+                    {responseDate}
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones -->
+        <div class="actions">
+            <button
+                class="btn ghost"
+                data-action="reply"
+                data-comment-id="{id}"
+            >
+                Responder
+            </button>
+            <button
+                class="btn ghost"
+                data-action="resolve"
+                data-comment-id="{id}"
+            >
+                Marcar resuelto
+            </button>
+        </div>
+    </div>
+</div>

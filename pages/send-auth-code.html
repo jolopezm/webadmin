@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Recuperar Contraseña — Pymap Admin</title>
+        <link rel="stylesheet" href="../css/estilo.css" />
+        <link rel="icon" href="../favicon.ico" type="image/x-icon" />
+    </head>
+    <body>
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">🔐</div>
+                    <h1 class="login-title">Recuperar Contraseña</h1>
+                    <p class="login-subtitle">
+                        Ingresa tu correo para recibir un código de verificación
+                    </p>
+                </div>
+
+                <div
+                    id="message"
+                    class="alert"
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+                <form id="email-form">
+                    <div class="form-group">
+                        <label class="form-label" for="email"
+                            >Correo Electrónico</label
+                        >
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            class="form-input"
+                            placeholder="tu@email.com"
+                            required
+                            autocomplete="email"
+                        />
+                    </div>
+                    <button id="send-btn" type="submit" class="btn-login">
+                        Enviar código
+                    </button>
+                </form>
+
+                <div
+                    id="code-section"
+                    aria-hidden="true"
+                    style="display: none; margin-top: 24px"
+                >
+                    <form id="verify-form">
+                        <div class="form-group">
+                            <label class="form-label" for="auth-code"
+                                >Código de Autenticación</label
+                            >
+                            <input
+                                id="auth-code"
+                                name="code"
+                                type="text"
+                                class="form-input"
+                                placeholder="000000"
+                                inputmode="numeric"
+                                autocomplete="one-time-code"
+                                maxlength="6"
+                            />
+                        </div>
+                        <button id="verify-btn" type="submit" class="btn-login">
+                            Verificar código
+                        </button>
+                    </form>
+                </div>
+
+                <div class="divider">
+                    <span>o</span>
+                </div>
+
+                <div class="link-secondary">
+                    <a href="login.html">← Volver al inicio de sesión</a>
+                </div>
+            </div>
+        </div>
+
+        <script type="module">
+            import {
+                sendAuthCode,
+                verifyAuthCode,
+            } from '../js/api/auth-service.js'
+
+            const emailForm = document.getElementById('email-form')
+            const sendBtn = document.getElementById('send-btn')
+            const emailInput = document.getElementById('email')
+
+            const codeSection = document.getElementById('code-section')
+            const verifyForm = document.getElementById('verify-form')
+            const codeInput = document.getElementById('auth-code')
+            const verifyBtn = document.getElementById('verify-btn')
+
+            const messageEl = document.getElementById('message')
+
+            function setMessage(text, type = '') {
+                messageEl.textContent = text
+                messageEl.className = type
+                    ? `alert alert-${type} show`
+                    : 'alert'
+            }
+
+            emailForm.addEventListener('submit', async e => {
+                e.preventDefault()
+                setMessage('')
+                sendBtn.disabled = true
+                sendBtn.innerHTML =
+                    '<span class="loading-spinner"></span>Enviando código...'
+
+                const email = emailInput.value.trim()
+                if (!email) {
+                    setMessage('Introduzca un correo válido.', 'error')
+                    sendBtn.disabled = false
+                    sendBtn.textContent = 'Enviar código'
+                    return
+                }
+
+                try {
+                    const resp = await sendAuthCode(email)
+                    codeSection.style.display = 'block'
+                    codeSection.setAttribute('aria-hidden', 'false')
+
+                    const possibleCode =
+                        resp?.code ??
+                        resp?.auth_code ??
+                        resp?.authCode ??
+                        resp?.verification_code ??
+                        resp?.verificationCode
+                    if (possibleCode) {
+                        codeInput.value = String(possibleCode)
+                        setMessage(
+                            'Código enviado. Se ha autocargado el código recibido.',
+                            'success'
+                        )
+                    } else {
+                        codeInput.value = ''
+                        setMessage(
+                            'Código enviado. Introduzca el código recibido en su correo.',
+                            'success'
+                        )
+                    }
+
+                    sessionStorage.setItem('authEmail', email)
+                } catch (err) {
+                    console.error(err)
+                    setMessage(err?.message || 'Error enviando código', 'error')
+                } finally {
+                    sendBtn.disabled = false
+                    sendBtn.textContent = 'Enviar código'
+                }
+            })
+
+            verifyForm.addEventListener('submit', async e => {
+                e.preventDefault()
+                setMessage('')
+                verifyBtn.disabled = true
+                verifyBtn.innerHTML =
+                    '<span class="loading-spinner"></span>Verificando...'
+
+                const email =
+                    sessionStorage.getItem('authEmail') ||
+                    emailInput.value.trim()
+                const code = codeInput.value.trim()
+                if (!email || !code) {
+                    setMessage('Correo y código son requeridos.', 'error')
+                    verifyBtn.disabled = false
+                    verifyBtn.textContent = 'Verificar código'
+                    return
+                }
+
+                try {
+                    const data = await verifyAuthCode({ email, code }, false)
+
+                    sessionStorage.setItem('resetEmail', email)
+
+                    setMessage('Código verificado correctamente.', 'success')
+                    setTimeout(() => {
+                        window.location.href = 'new-password.html'
+                    }, 800)
+                } catch (err) {
+                    console.error(err)
+                    setMessage(err?.message || 'Código inválido', 'error')
+                    verifyBtn.disabled = false
+                    verifyBtn.textContent = 'Verificar código'
+                }
+            })
+        </script>
+    </body>
+</html>

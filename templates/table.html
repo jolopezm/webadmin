@@ -1,0 +1,24 @@
+<table>
+    <thead>
+        <tr
+            style="
+                border-bottom: 1px solid
+                    var(--light-gray);
+            "
+        >
+            {% for header in headers %}
+            <th
+                style="
+                    text-align: left;
+                    padding: 12px;
+                "
+            >
+                {{ header }}
+            </th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody id="{{ table_id }}">
+        <!-- Se llenará dinámicamente -->
+    </tbody>
+</table>

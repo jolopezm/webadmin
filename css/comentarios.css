@@ -1,0 +1,90 @@
+/* ========================================
+   Lista de Comentarios
+   ======================================== */
+.comments {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 66vh;
+    overflow: auto;
+    padding-right: 6px;
+}
+
+.comment {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--light-gray);
+    background: #fff;
+    display: flex;
+    gap: 12px;
+}
+
+.comment .meta {
+    width: 72px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.comment .meta .user {
+    font-weight: 600;
+    color: #333;
+    font-size: 13px;
+}
+
+.comment .body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.comment .body .text {
+    color: #333;
+}
+
+.rating {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    color: #ffb400;
+}
+
+.status {
+    padding: 6px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    border: 1px solid var(--light-gray);
+    display: inline-block;
+    background: #fafafa;
+}
+
+.comment .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.reply-box {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.reply-box textarea {
+    flex: 1;
+    min-height: 64px;
+    resize: vertical;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--light-gray);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.small {
+    font-size: 13px;
+    color: var(--muted);
+}

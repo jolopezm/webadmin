@@ -1,0 +1,36 @@
+/* ========================================
+   Controles y Filtros
+   ======================================== */
+.controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.select,
+.input {
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--light-gray);
+    background: white;
+    font-size: 13px;
+}
+
+.btn {
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: var(--purple);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn.ghost {
+    background: transparent;
+    color: var(--purple);
+    border: 1px solid var(--light-gray);
+}

@@ -1,0 +1,197 @@
+/* ========================================
+   Pymap - Admin Dashboard Styles
+   ======================================== */
+
+/* Variables CSS */
+@import url('./main-content.css');
+@import url('./sidebar.css');
+@import url('./metricas.css');
+@import url('./page-title.css');
+@import url('./controles-filtros.css');
+@import url('./comentarios.css');
+@import url('./paginacion.css');
+@import url('./toast.css');
+@import url('./reportes.css');
+@import url('./responsive.css');
+@import url('./sidebar-derecho.css');
+@import url('./content-layout.css');
+@import url('./login.css');
+
+:root {
+    --purple: #6c3bbf;
+    --light-gray: #d9d9d9;
+    --bg: #ffffff;
+    --muted: #6b6b6b;
+    --radius: 10px;
+    --shadow: 0 6px 18px rgba(109, 103, 135, 0.06);
+    font-family:
+        'Poppins',
+        system-ui,
+        -apple-system,
+        'Segoe UI',
+        Roboto,
+        'Helvetica Neue',
+        Arial;
+}
+
+/* Reset y Base */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: #f7f7fb;
+    color: #222;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================================
+   Layout Principal
+   ======================================== */
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ========================================
+   Table Component Styles
+   ======================================== */
+
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 16px;
+}
+
+.table-filters {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.table-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.table-wrapper {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+    width: 100%;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--light-gray);
+    border-radius: var(--radius);
+}
+
+.data-table th {
+    background: #f8f9fa;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--muted);
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.data-table td {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.data-table tr:hover {
+    background: #f8f9fa;
+}
+
+.data-table tr.editing {
+    background: #fff3cd;
+}
+
+.data-table input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+.data-table input[type="text"] {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--light-gray);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 16px;
+    padding: 16px;
+}
+
+.page-btn {
+    padding: 8px 12px;
+    border: 1px solid var(--light-gray);
+    background: white;
+    color: var(--muted);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn:hover {
+    background: var(--purple);
+    color: white;
+}
+
+.page-btn.active {
+    background: var(--purple);
+    color: white;
+    font-weight: 600;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-warning { background: #fff3cd; color: #856404; }
+.badge-info { background: #d1ecf1; color: #0c5460; }
+.badge-success { background: #d4edda; color: #155724; }
+.badge-danger { background: #f8d7da; color: #721c24; }
+.badge-gray { background: #e9ecef; color: #383d41; }
+
+
+.middle-ellipsis {
+    display: inline-block;
+    max-width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+}

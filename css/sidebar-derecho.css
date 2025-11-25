@@ -1,0 +1,21 @@
+/* ========================================
+   Sidebar Derecho (Charts, etc)
+   ======================================== */
+.side-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.side-top > .card {
+    border-radius: 0;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.side-top > .card:last-child {
+    border-bottom: none;
+}
+
+canvas {
+    background: transparent;
+}

@@ -1,0 +1,21 @@
+/* ========================================
+   Responsive Design
+   ======================================== */
+@media (max-width: 940px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .report-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .report-actions button {
+        width: 100%;
+    }
+}

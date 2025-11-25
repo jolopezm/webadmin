@@ -1,0 +1,18 @@
+/* ========================================
+   Paginación
+   ======================================== */
+.pagination {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.page-btn {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--light-gray);
+    background: white;
+    cursor: pointer;
+}

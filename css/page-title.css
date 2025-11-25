@@ -1,0 +1,20 @@
+/* ========================================
+   Page Title
+   ======================================== */
+.page-title {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.page-title h1 {
+    margin: 0;
+    color: var(--purple);
+    font-size: 20px;
+}
+
+.page-title p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
