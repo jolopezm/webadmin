@@ -1,5 +1,5 @@
-//const API_URL = 'https://pymemap-production-306f.up.railway.app'
-const API_URL = 'http://localhost:8000'
+const API_URL = 'https://pymemap-production-306f.up.railway.app'
+//const API_URL = 'http://localhost:8000'
 
 async function getAuthHeaders() {
     const token = localStorage.getItem('token')
